@@ -11,10 +11,10 @@ public class SquarePrimesTest {
      * is broken. Write your own JUnit Test to try to uncover the bug!
      */
     @Test
-    public void testSquarePrimesSimple() {
-        IntList lst = IntList.of(14, 15, 16, 17, 18);
+    public void testSquarePrimesSimple2() {
+        IntList lst = IntList.of(17, 3, 2, 2, 1);
         boolean changed = IntListExercises.squarePrimes(lst);
-        assertEquals("14 -> 15 -> 16 -> 289 -> 18", lst.toString());
+        assertEquals("289 -> 9 -> 4 -> 4 -> 1", lst.toString());
         assertTrue(changed);
     }
 }
