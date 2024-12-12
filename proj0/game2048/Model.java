@@ -117,8 +117,8 @@ public class Model extends Observable {
         // set view
         board.setViewingPerspective(side);
 
-        // 1. merge all tiles that can be merged first
-        // find the first tile that is not null
+
+        /*先合并在移动，不用写状态量，但是算法难，且两次遍历
         for(int col = 0; col < board.size(); col++){
             // loop from top
             for(int row = board.size() - 1; row >= 0; row--){
@@ -146,8 +146,6 @@ public class Model extends Observable {
                 }
             }
         }
-
-        // 2. push all
         for(int col = 0; col < board.size(); col++) {
             // loop from top
             for (int row = board.size() - 1; row >= 0; row--) {
@@ -159,6 +157,39 @@ public class Model extends Observable {
                             // Then move t2 to the place of t1
                             board.move(col, row, t2);
                             changed = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }*/
+        int state[][] = new int[board.size()][board.size()];
+        for(int col = 0; col < board.size(); col++) {
+            for(int row = board.size()-1; row >= 0; row--) {
+                state[col][row] = 0;
+                Tile t1 = board.tile(col, row);
+                if(t1 == null) continue;  // 跳过空位置
+
+                for(int row2 = row-1; row2 >= 0; row2--) {
+                    Tile t2 = board.tile(col, row2);
+                    if(t2 == null) continue;  // 跳过空位置
+
+                    // 找到非空方块t2
+                    if(state[col][row2] == 0) {  // 如果t2未被处理过
+                        if(t2.value() == t1.value()) {  // 可以合并
+                            state[col][row2] = 1;  // 标记为已处理
+                            if(board.move(col, row, t2)) {
+                                changed = true;
+                                score += t1.value() * 2;
+                            }
+                            break;
+                        } else {  // 不能合并，移动到上一个位置
+                            if(row2 != row-1) {  // 如果不是相邻的，才需要移动
+                                if(board.move(col, row-1, t2)) {
+                                    changed = true;
+                                    state[col][row2] = 1;
+                                }
+                            }
                             break;
                         }
                     }
