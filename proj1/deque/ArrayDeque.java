@@ -65,29 +65,31 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         return size;
     }
 
-    private void shrinkSize() {
-        if (isEmpty()) {
-            resize(8);
-        } else if (items.length / 4 > size && size >= 4) {
-            resize(size * 2);
-        }
-    }
-
     public T removeFirst(){
+        if (isEmpty()) {
+            return null;  // 当队列为空时返回null，不要修改size
+        }
         nextFirst=plusOne(nextFirst);
         T item=items[nextFirst];
         items[nextFirst]=null;
         size--;
-        shrinkSize();
+        if (items.length >= 16 && size < items.length * 0.25) {
+            resize(items.length / 2);
+        }
         return item;
 
     }
     public T removeLast(){
+        if (isEmpty()) {
+            return null;  // 当队列为空时返回null，不要修改size
+        }
         nextLast=minusOne(nextLast);
         T item=items[nextLast];
         items[nextLast]=null;
         size--;
-        shrinkSize();
+        if (items.length >= 16 && size < items.length * 0.25) {
+            resize(items.length / 2);
+        }
         return item;
     }
 
