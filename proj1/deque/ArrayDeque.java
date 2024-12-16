@@ -32,10 +32,15 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     private void resize(int newSize) {
         T[] newItems = (T[]) new Object[newSize];
         int firstpos = Math.abs(newSize-size)/2;
-        System.arraycopy(items, 0, newItems, firstpos,size);
+        int curr = plusOne(nextFirst);
+        for (int i = 0; i < size; i++) {
+            newItems[firstpos + i] = items[curr];
+            curr = plusOne(curr);
+        }
+
         items = newItems;
         nextFirst = minusOne(firstpos);
-        nextLast = (nextFirst+size)%items.length;
+        nextLast = firstpos + size;
     }
 
     public void addFirst(T item){
@@ -44,7 +49,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
         items[nextFirst]=item;
         size++;
-        minusOne(nextFirst);
+        nextFirst=minusOne(nextFirst);
     }
 
     public void addLast(T item){
@@ -53,7 +58,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
         items[nextLast]=item;
         size++;
-        plusOne(nextLast);
+        nextLast=plusOne(nextLast);
     }
 
     public int size(){
@@ -97,7 +102,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         int currentLast=minusOne(nextLast);
         while(currentFist!=currentLast){
             System.out.print(items[currentFist]+" ");
-            plusOne(currentFist);
+            currentFist=plusOne(currentFist);
         }
         System.out.println();
     }
@@ -119,14 +124,20 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         }
     }
 
-    public boolean equals(Object o){
-        if(o==null)return false;
-        if(o==this)return true;
-        if(!(o instanceof ArrayDeque))return false;
+    public boolean equals(Object o) {
+        if (o == null) return false;
+        if (o == this) return true;
+        if (!(o instanceof ArrayDeque)) return false;
         ArrayDeque<T> other = (ArrayDeque<T>) o;
-        if(size!=other.size)return false;
-        for(int currentFirst=plusOne(this.nextFirst); currentFirst<minusOne(this.nextLast); plusOne(this.nextFirst)){
-            if(items[currentFirst]!=other.items[currentFirst])return false;
+        if (size != other.size) return false;
+        for (int i = 0; i < size; i++) {
+            T item1 = this.get(i);
+            T item2 = other.get(i);
+            if (item1 == null) {
+                if (item2 != null) return false;
+            } else if (!item1.equals(item2)) {
+                return false;
+            }
         }
         return true;
     }
